@@ -1,0 +1,5 @@
+export enum GfxEnum {
+<% props.assets.forEach(a => { -%>
+    <%= props.camelCase(a) %> = "<%= a %>",
+<% }); -%>
+}
