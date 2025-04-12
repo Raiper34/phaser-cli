@@ -29,7 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "gluegun": "latest",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "simple-tree-utils": "^3.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",

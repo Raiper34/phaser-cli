@@ -1,0 +1,7 @@
+{
+  "assets": [
+<% props.folders.forEach((a, index) => { -%>
+      "<%= a %>"<% if (index < props.folders.length - 1) { %>,<% } %>
+<% }); -%>
+  ]
+}

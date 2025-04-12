@@ -1,19 +1,30 @@
 import { GluegunToolbox } from 'gluegun'
 import {camelCase} from 'lodash';
 
-//const BASE_SFX = './src/assets/sfx'; // todo make it configurable
-//const BASE_GFX = 'src/commands';
-
 module.exports = {
   name: 'generate',
   alias: ['g'],
   run: async (toolbox: GluegunToolbox) => {
     const {
       template: { generate },
-      filesystem: { list, cwd },
+      filesystem: { inspectTree, cwd, read },
     } = toolbox
 
-    const assets = (await list(cwd()));
-    await generate({template: 'asset.enum.ts.ejs', target: 'gfx.enum.ts', props: {assets, camelCase}});
+    const {assets: assetsConfig} = await read(`${cwd()}/.pcrc`, 'json');
+    for (let assetFolder of assetsConfig) {
+      const assets = (await inspectTree(`${cwd()}/${assetFolder}`)).children
+        .filter(item => item.type === 'file')
+        .map(item => {
+          return {name: firstCase(item.name.split('.')[0]), path: item.name};
+        });
+      const assetPath = assetFolder.split('/');
+      const assetName = assetPath[assetPath.length - 1];
+      await generate({template: 'asset.enum.ts.ejs', target: `${assetName}.enum.ts`, props: {assetName: firstCase(assetName), assets, camelCase}});
+    }
   },
+}
+
+function firstCase(val: string): string {
+  const camelCased = camelCase(val)
+  return String(camelCased).charAt(0).toUpperCase() + String(camelCased).slice(1);
 }
